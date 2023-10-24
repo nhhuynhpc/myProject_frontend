@@ -1,0 +1,45 @@
+.form-size-product label {
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.form-size-product select {
+    border-radius: 3px;
+    outline: none;
+}
+
+
+.cart-update-number {
+    margin: 10px 0 10px;
+    display: flex;
+}
+
+.cart-update-number button {
+height: 25px;
+border: 1px solid #afafaf;
+border-radius: 5px;
+background-color: white;
+color: #5b5858;
+cursor: pointer;
+}
+
+.cart-update-number button:nth-child(1) {
+border-top-right-radius: 0;
+border-bottom-right-radius: 0;
+}
+
+.cart-update-number button:nth-child(3) {
+border-top-left-radius: 0;
+border-bottom-left-radius: 0;
+}
+
+.cart-update-number input {
+text-align: center;
+font-size: 16px;
+height: 25px;
+width: 35px;
+outline: none;
+border: 1px solid #afafaf;
+border-left: none;
+border-right: none;
+}

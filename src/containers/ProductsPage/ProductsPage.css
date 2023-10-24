@@ -1,0 +1,27 @@
+.product-view{
+    margin-top: 135px;
+    margin-left: 75px;
+    margin-right: 75px;
+    padding: 30px 25px;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.slide-bar {
+    width: 25%;
+    margin-right: 25px;
+    border-right: 1px solid rgb(155, 155, 154);
+}
+
+.product-main {
+    width: 75%;
+}
+
+@media screen and (max-width: 1250px) {
+    .product-view {
+        margin: 135px 0;
+        border-radius: 0;
+    }
+}

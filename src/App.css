@@ -1,38 +1,73 @@
-.App {
-  text-align: center;
+* {
+    box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    background-color: #e3dee3;
+    background-size: cover;
+    background-attachment: fixed;
+    box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.space-header {
+    margin-top: 85px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* page product detail */
+
+.main-product-detail {
+    display: flex;
+    justify-content: space-evenly;
 }
 
-.App-link {
-  color: #61dafb;
+.product-detail_img {
+    width: 550px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.product-detail_img img {
+    width: inherit;
+}
+
+.product-detail_content h2 {
+    font-weight: 500;
+}
+
+.product-detail_content .price {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.form-number-product {
+    margin: 10px 0 10px;
+    display: flex;
+}
+
+.form-number-product button {
+    height: 30px;
+    border: 1px solid #AFAFAF;
+    border-radius: 5px;
+    background-color: white;
+    color: #5b5858;
+    cursor: pointer;
+}
+
+.form-number-product button:nth-child(1) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.form-number-product button:nth-child(3) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-number-product input {
+    text-align: center;
+    font-size: 16px;
+    height: 30px;
+    width: 45px;
+    outline: none;
+    border: 1px solid #AFAFAF;
+    border-left: none;
+    border-right: none;
 }

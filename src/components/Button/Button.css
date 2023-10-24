@@ -1,0 +1,21 @@
+.btn {
+    background-color: aliceblue;
+    display: block;
+    margin: 25px auto 0;
+    padding: 8px 20px;
+    border: none;
+    border: 1px solid aliceblue;
+    border-radius: 5px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #5DA5ED;
+    border: 1px solid #5DA5ED;
+
+}
+
+.btn:active {
+    border: 1px solid white;
+}

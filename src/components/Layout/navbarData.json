@@ -1,0 +1,103 @@
+[
+    {
+        "label": "NỮ",
+        "link": "nu",
+        "options": [
+            {
+                "label": "ÁO",
+                "options": ["Áo phông", "Áo polo", "Áo ba lỗ", "Áo kiểu", "Áo sơ mi", "Áo phông", "Áo len", "Áo nỉ", "Áo nỉ có mũ"]
+            },
+            {
+                "label": "QUẦN",
+                "options": ["Quần shorts", "Quần jeans", "Quần vải", "Quần nỉ", "Quần khaki"]
+            },
+            {
+                "label": "VÁY",
+                "options": ["Váy liền thân", "Chân váy"]
+            },
+            {
+                "label": "ĐỒ MẶC NGOÀI",
+                "options": ["Chống nắng", "Áo khoác ngắn", "Áo khoác gió", "Áo khoác chần bông", "Áo khoác lông vũ"]
+            },
+            {
+                "label": "ĐỒ MẶC NHÀ",
+                "options": ["Bộ mặc nhà", "Quần mặc nhà", "Áo mặc nhà"]
+            },
+            {
+                "label": "ĐỒ MẶC TRONG",
+                "options": ["Đồ lót", "Giữ nhiệt", "Áo mặc trong"]
+            },
+            {
+                "label": "PHỤ KIỆN",
+                "options": ["Phụ kiện", "Đồ dùng cá nhân"]
+            },
+            {
+                "label": "GIÁ TỐT"
+            }
+        ]
+    },
+    {
+        "label": "NAM",
+        "link": "nam",
+        "options": [
+            {
+                "label": "ÁO",
+                "options": ["Áo phông", "Áo polo", "Áo ba lỗ", "Áo len", "Áo nỉ", "Áo nỉ có mũ", "Áo dài tay"]
+            },
+            {
+                "label": "QUẦN",
+                "options": ["Quần shorts", "Quần jeans", "Quần nỉ", "Quần khaki", "Quần vải"]
+            },
+            {
+                "label": "ĐỒ MẶC NGOÀI",
+                "options": ["Chống nắng", "Áo khoác ngắn", "Áo khoác gió", "Áo khoác chần bông", "Áo khoác lông vũ"]
+            },
+            {
+                "label": "ĐỒ MẶC NHÀ",
+                "options": ["Bộ mặc nhà", "Quần mặc nhà", "Áo mặc nhà"]
+            },
+            {
+                "label": "ĐỒ MẶC TRONG",
+                "options": ["Quần lót nam", "Áo mặc trong", "Giữ nhiệt"]
+            },
+            {
+                "label": "PHỤ KIỆN",
+                "options": ["Phụ kiện", "Đồ dùng cá nhân"]
+            },
+            {
+                "label": "GIÁ TỐT"
+            }
+        ]
+    },
+    {
+        "label": "TRẺ EM",
+        "options": [
+            {
+                "label": "ÁO TRẺ EM",
+                "options": ["Áo polo", "Áo Thun", "Áo khoác", "Áo sơ mi", "Áo len", "Áo nỉ"]
+            },
+            {
+                "label": "QUẦN TRẺ EM",
+                "options": ["Quần jeans", "Quần Kaki", "Quần Short", "Quần nỉ", "Quần Legging"]
+            },
+            {
+                "label": "CHÂN VÁY BÉ GÁI"
+            },
+            {
+                "label": "ĐẦM BÉ GÁI"
+            },
+            {
+                "label": "ĐỒ BỘ TRẺ EM"
+            },
+            {
+                "label": "ĐỒ THỂ THAO TRẺ EM"
+            },
+            {
+                "label": "PHỤ KIỆN TRẺ EM"
+            }
+        ]
+    },
+    {
+        "label": "GIÁ TỐT"
+    }
+]
