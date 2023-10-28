@@ -1,60 +1,98 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { DeleteProductInCart, GetProductInCart, PostCarts, PostCartsDetail } from "../../services/authService"
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { GetProductInCart, PostCarts } from '../../services/cartsService';
+import {
+    DeleteProductInCart,
+    PostAddCartDetail,
+    PostUpdateCartsDetail,
+} from '../../services/cartsDetailService';
 
 const initialState = {
     cart: {
-        cart: {
-
-        }
+        cart: {},
     },
     statusCart: false,
-}
+};
 
-export const updateCart = createAsyncThunk(
-    "cart/update-cart",
-    async (data) => {
-        let resultPostCarts = await PostCarts({user_id: data.user_id})
-        let dataPostcartDetail = {
-            cart_id: resultPostCarts.data.cart_id,
-            product_id: data.product_id,
-            quantity: data.quantity,
-            size: data.size,
-        }
+export const originalCart = createAsyncThunk('cart/original', async (data) => {
+    return await GetProductInCart({ user_id: data.user_id });
+});
 
-        await PostCartsDetail(dataPostcartDetail)
-        let result = await GetProductInCart({user_id: data.user_id})
-        return result
-    }
-)
+export const addCart = createAsyncThunk('cart/add-cart', async (data) => {
+    let resultPostCarts = await PostCarts({ user_id: data.user_id });
+    let dataPostcartDetail = {
+        cart_id: resultPostCarts.data.cart_id,
+        product_id: data.product_id,
+        quantity: data.quantity,
+        size: data.size,
+    };
+
+    await PostAddCartDetail(dataPostcartDetail);
+    let result = await GetProductInCart({ user_id: data.user_id });
+    return result;
+});
+
+export const updateCart = createAsyncThunk('cart/update-cart', async (data) => {
+    let resultPostCarts = await PostCarts({ user_id: data.user_id });
+    let dataPostcartDetail = {
+        cart_id: resultPostCarts.data.cart_id,
+        product_id: data.product_id,
+        quantity: data.quantity,
+        size: data.size,
+    };
+
+    await PostUpdateCartsDetail(dataPostcartDetail);
+    let result = await GetProductInCart({ user_id: data.user_id });
+    return result;
+});
 
 export const deleteProdcutCart = createAsyncThunk(
-    "cart/delete-cart",
+    'cart/delete-cart',
     async (data) => {
-        let id = data.cartsDetailsId
-        await DeleteProductInCart({id: id})
-        return await GetProductInCart({user_id: data.user_id})
+        let id = data.cartsDetailsId;
+        await DeleteProductInCart({ id: id });
+        return await GetProductInCart({ user_id: data.user_id });
     }
-)
+);
+
+export const clearCart = createAsyncThunk('cart/clear', () => {
+    return;
+});
 
 const cartSlice = createSlice({
     name: 'cart',
     initialState,
     extraReducers: (builder) => {
         builder
-        .addCase(updateCart.fulfilled, (state, action) => {
-            state.cart = action.payload?.data;
-            if (state.cart.length > 0) {
-                state.statusCart = true
-            }
-        })
-        .addCase(deleteProdcutCart.fulfilled, (state, action) => {
-            state.cart = action.payload?.data
-            if (state.cart.length > 0) {
-                state.statusCart = true
-            }
-        })
-    }
-})
+            .addCase(originalCart.fulfilled, (state, action) => {
+                state.cart = action.payload?.data;
+                if (state.cart.length > 0) {
+                    state.statusCart = true;
+                }
+            })
+            .addCase(addCart.fulfilled, (state, action) => {
+                state.cart = action.payload?.data;
+                if (state.cart.length > 0) {
+                    state.statusCart = true;
+                }
+            })
+            .addCase(updateCart.fulfilled, (state, action) => {
+                state.cart = action.payload?.data;
+                if (state.cart.length > 0) {
+                    state.statusCart = true;
+                }
+            })
+            .addCase(deleteProdcutCart.fulfilled, (state, action) => {
+                state.cart = action.payload?.data;
+                if (state.cart.length > 0) {
+                    state.statusCart = true;
+                }
+            })
+            .addCase(clearCart.fulfilled, (state, action) => {
+                state.cart = {};
+                state.statusCart = false;
+            });
+    },
+});
 
 const { reducer } = cartSlice;
 

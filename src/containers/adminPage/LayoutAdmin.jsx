@@ -35,9 +35,10 @@ const settingsAdmin = [
     },
 ];
 const LayoutAdmin = ({ children }) => {
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    
+    const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);

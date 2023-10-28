@@ -5,6 +5,7 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
+    Breadcrumbs,
     Container,
     Grid,
     List,
@@ -18,60 +19,76 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CardProduct from '../../components/CardProduct/CardProduct';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDataFilterCateDetail, setDataFilterPrice, setDataProducts } from '../../redux/slides/productSlide';
-import { useParams } from 'react-router-dom';
+import {
+    setDataFilterCateDetail,
+    setDataFilterPrice,
+    setDataProducts,
+} from '../../redux/slides/productSlide';
+import { Link, useParams } from 'react-router-dom';
 import { productsRemainingSelector } from '../../redux/selectors';
-import { getTitle } from '../../services/authService';
+import { getTitle } from '../../services/titleService';
 const api_url = 'http://localhost:8080/';
 
 const ProductsPage = () => {
+    const param = useParams();
+    const dispatch = useDispatch();
+
+    const productRedux = useSelector(productsRemainingSelector);
+
     const [dataProduct, setDataProduct] = React.useState([]);
     const [listProduct, setListProduct] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const [dataAPage, setDataAPage] = React.useState([]);
-    const handleChangePage = (event, value) => {
-        setPage(value);
-    };
-    const param = useParams()
-    const dispatch = useDispatch()
-    const productRedux = useSelector(productsRemainingSelector)
+
+    const [value, setValue] = React.useState([0, 100]);
+    const minDistance = 10;
 
     React.useEffect(() => {
-        setDataProduct(productRedux)
-    }, [productRedux])
+        setDataProduct(productRedux);
+    }, [productRedux]);
 
     React.useEffect(() => {
         setCateDetailDefault(param.products);
         setProductsDefault();
-        fetchListProducts()
+        fetchListProducts();
     }, []);
 
-    const fetchListProducts = async () => {
-        let result = await getTitle()
-        let listProduct = result.data?.title.filter(data => data.link.includes(param.groupProducts))
-    
-        setListProduct(listProduct[0]?.options ?? [])
-    }
-
-    const setCateDetailDefault = async (data) => {
-        let action = setDataFilterCateDetail(data)
-        dispatch(action)
-    };
-
-    const setProductsDefault = async () => {
-        let action = setDataProducts({typeCustomer: param.groupProducts})
-        dispatch(action)
-    };
+    React.useEffect(() => {
+        let action = setDataFilterPrice({
+            data: [value[0] * 20000, value[1] * 20000],
+        });
+        dispatch(action);
+    }, [value]);
 
     // set data for block new product
     React.useEffect(() => {
         setDataAPage(dataProduct.slice(page * 24 - 24, page * 24));
     }, [page, dataProduct]);
 
-    // style slidebar
-    const [value, setValue] = React.useState([0, 100]);
-    const minDistance = 10;
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
 
+    const fetchListProducts = async () => {
+        let result = await getTitle();
+        let listProduct = result.data?.title.filter((data) =>
+            data.link.includes(param.groupProducts)
+        );
+
+        setListProduct(listProduct[0]?.options ?? []);
+    };
+
+    const setCateDetailDefault = async (data) => {
+        let action = setDataFilterCateDetail(data);
+        dispatch(action);
+    };
+
+    const setProductsDefault = async () => {
+        let action = setDataProducts({ typeCustomer: param.groupProducts });
+        dispatch(action);
+    };
+
+    // style slidebar
     const handleChange = (event, newValue, activeThumb) => {
         if (!Array.isArray(newValue)) {
             return;
@@ -90,37 +107,71 @@ const ProductsPage = () => {
         }
     };
 
-    React.useEffect(() => {
-        let action = setDataFilterPrice({data: [value[0] * 20000, value[1] * 20000]})
-        dispatch(action)
-    }, [value])
-
     return (
         <>
+            <Box
+                sx={{
+                    width: 'fit-content',
+                    marginTop: '105px',
+                    marginLeft: '75px',
+                    backgroundColor: 'white',
+                    borderRadius: '15px',
+                    padding: '5px 10px',
+                }}
+            >
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link to={'/'}>
+                        <span style={{ color: '#959598' }}>Trang chủ</span>
+                    </Link>
+                    <Link to={'/'}>
+                        <span style={{ color: '#959598' }}>
+                            {param.groupProducts ?? 'err'}
+                        </span>
+                    </Link>
+                    <span style={{ color: '#1C1F1F' }}>
+                        {param.products ?? 'err'}
+                    </span>
+                </Breadcrumbs>
+            </Box>
             <div className="product-view">
                 <div className="slide-bar">
                     <Typography sx={{ fontWeight: '700' }}>Danh mục</Typography>
                     <List>
-                        {listProduct && listProduct.map(({label, options}, index) => (
-                            <Accordion key={index}>
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon />}
-                              aria-controls="panel1a-content"
-                              id="panel1a-header"
-                            >
-                              <Typography>{ label }</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                {options && options.map((option, i) => (
-                                    <ListItem key={i} disablePadding>
-                                        <ListItemButton onClick={() => setCateDetailDefault(option.link)}>
-                                            <ListItemText primary={option.label} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))}
-                            </AccordionDetails>
-                          </Accordion>
-                        ))}
+                        {listProduct &&
+                            listProduct.map(({ label, options }, index) => (
+                                <Accordion key={index}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls="panel1a-content"
+                                        id="panel1a-header"
+                                    >
+                                        <Typography>{label}</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        {options &&
+                                            options.map((option, i) => (
+                                                <ListItem
+                                                    key={i}
+                                                    disablePadding
+                                                >
+                                                    <ListItemButton
+                                                        onClick={() =>
+                                                            setCateDetailDefault(
+                                                                option.link
+                                                            )
+                                                        }
+                                                    >
+                                                        <ListItemText
+                                                            primary={
+                                                                option.label
+                                                            }
+                                                        />
+                                                    </ListItemButton>
+                                                </ListItem>
+                                            ))}
+                                    </AccordionDetails>
+                                </Accordion>
+                            ))}
                     </List>
                     <div className="filter">
                         <Accordion>
@@ -159,9 +210,19 @@ const ProductsPage = () => {
                 </div>
                 <div className="product-main">
                     <Container>
-                        {
-                            dataAPage.length === 0 ?
-                            <Box sx={{marginTop: '30px'}}><Typography sx={{textAlign: 'center', fontSize: '24px', fontWeight: '600'}}>Không có sản phẩm</Typography></Box> :
+                        {dataAPage.length === 0 ? (
+                            <Box sx={{ marginTop: '30px' }}>
+                                <Typography
+                                    sx={{
+                                        textAlign: 'center',
+                                        fontSize: '24px',
+                                        fontWeight: '600',
+                                    }}
+                                >
+                                    Không có sản phẩm
+                                </Typography>
+                            </Box>
+                        ) : (
                             <Box
                                 sx={{
                                     width: 'fit-content',
@@ -173,15 +234,28 @@ const ProductsPage = () => {
                                     spacing={{ xs: 2, md: 3 }}
                                     columns={{ xs: 16, sm: 8, md: 16 }}
                                 >
-                                    {dataAPage && dataAPage.map((item, i) => (
-                                        <Grid item xs={2} sm={4} md={dataAPage.length > 3 ? 4: 8} key={i}>
-                                            <ItemBlockProduct item={item} />
-                                        </Grid>
-                                    ))}
+                                    {dataAPage &&
+                                        dataAPage.map((item, i) => (
+                                            <Grid
+                                                item
+                                                xs={2}
+                                                sm={4}
+                                                md={
+                                                    dataAPage.length > 3 ? 4 : 8
+                                                }
+                                                key={i}
+                                            >
+                                                <ItemBlockProduct item={item} />
+                                            </Grid>
+                                        ))}
                                 </Grid>
                                 <a href="#blockProductHeading">
                                     <Pagination
-                                        count={Math.floor(dataProduct.length / 24) + 1}
+                                        count={
+                                            Math.floor(
+                                                dataProduct.length / 24
+                                            ) + 1
+                                        }
                                         page={page}
                                         onChange={handleChangePage}
                                         sx={{
@@ -192,7 +266,7 @@ const ProductsPage = () => {
                                     />
                                 </a>
                             </Box>
-                        }
+                        )}
                     </Container>
                 </div>
             </div>

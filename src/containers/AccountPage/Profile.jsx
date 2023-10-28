@@ -17,12 +17,12 @@ import { authRedux } from '../../redux/selectors';
 const api_url = 'http://localhost:8080/';
 
 const Profile = () => {
-    const authData = useSelector(authRedux)
-    const [dataUser, setDataUser] = React.useState()
+    const authData = useSelector(authRedux);
+    const [dataUser, setDataUser] = React.useState();
 
     React.useEffect(() => {
-        setDataUser(authData.user.result)
-    }, [authData])
+        setDataUser(authData.user.result);
+    }, [authData]);
     const settings = {
         dots: true,
         infinite: true,
@@ -41,25 +41,49 @@ const Profile = () => {
                     </Slider>
                 </Box>
                 <Box sx={{ width: '50%' }}>
-                    <Box sx={{padding: '15px 0'}}>
+                    <Box sx={{ padding: '15px 0' }}>
                         <ListItem alignItems="flex-start">
                             <ListItemAvatar>
                                 <Avatar
                                     alt="Remy Sharp"
                                     src={api_url + 'userImg.webp'}
-                                    sx={{width: '80px', height: '80px', marginRight: '15px'}}
+                                    sx={{
+                                        width: '80px',
+                                        height: '80px',
+                                        marginRight: '15px',
+                                    }}
                                 />
                             </ListItemAvatar>
                             <ListItemText
-                                primary={<Typography sx={{marginTop: '15px', fontSize: '20px', fontWeight: '500'}}>{dataUser?.username ?? 'err'}</Typography>}
-                                secondary={<Typography>{dataUser?.email ?? 'err'}</Typography>}
+                                primary={
+                                    <Typography
+                                        sx={{
+                                            marginTop: '15px',
+                                            fontSize: '20px',
+                                            fontWeight: '500',
+                                        }}
+                                    >
+                                        {dataUser?.username ?? 'err'}
+                                    </Typography>
+                                }
+                                secondary={
+                                    <Typography>
+                                        {dataUser?.email ?? 'err'}
+                                    </Typography>
+                                }
                             />
                         </ListItem>
                     </Box>
                     <Box>
-                    <List>
-                            <ListItem disablePadding sx={{borderTop: '1px solid #C4C4C4', padding: '10px 15px'}}>
-                              <ListItemText primary="ĐÃ MUA: " />
+                        <List>
+                            <ListItem
+                                disablePadding
+                                sx={{
+                                    borderTop: '1px solid #C4C4C4',
+                                    padding: '10px 15px',
+                                }}
+                            >
+                                <ListItemText primary="ĐÃ MUA: " />
                             </ListItem>
                         </List>
                     </Box>

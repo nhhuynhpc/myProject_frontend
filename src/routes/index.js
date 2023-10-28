@@ -1,24 +1,41 @@
 import Layout from "../components/Layout/Layout"
-import Login from "../containers/getUser/Login";
-import Register from "../containers/getUser/Register";
-import Profile from "../containers/AccountPage/Profile";
-import Categories from "../containers/adminPage/pageCategories/Categories";
-import Products from "../containers/adminPage/pageProduct/Products";
+
 import Home from "../containers/HomePage/Home";
-import StatisticsPage from "../containers/adminPage/StatisticsPage";
-import LayoutAdmin from "../containers/adminPage/LayoutAdmin";
-import ProductDetail from "../containers/ProductDetail";
-import CategoriesLayout from "../containers/CategoriesLayout/CategoriesLayout";
-import SearchResult from "../containers/SearchResult";
-import Cart from "../containers/cart/Cart";
-import ProductsPage from "../containers/ProductsPage/ProductsPage";
+
+// user
+import Login from "../containers/GetUser/Login";
+import Register from "../containers/GetUser/Register";
+
+//account
 import AccountLayout from "../containers/AccountPage/AccountLayout";
-import HistoryProduct from "../containers/AccountPage/HistoryProduct";
+import Profile from "../containers/AccountPage/Profile";
+import Orders from "../containers/AccountPage/Orders";
 import Setting from "../containers/AccountPage/Setting";
 import Contact from "../containers/AccountPage/Contact";
-import Users from "../containers/adminPage/pageUser/Users";
-import Orders from "../containers/adminPage/pageOrder/Orders";
+
+// search
+import SearchResult from "../containers/SearchResult";
+
+// product
+import ProductsPage from "../containers/ProductsPage/ProductsPage";
+import ProductDetail from "../containers/ProductDetail";
+
+// categories
+import CategoriesLayout from "../containers/CategoriesLayout/CategoriesLayout";
+
+// cart
+import Cart from "../containers/Cart/Cart";
+
+// checkout
 import Checkout from "../containers/CheckoutPage/Checkout";
+
+// admin
+import Categories from "../containers/AdminPage/PageCategories/Categories";
+import Products from "../containers/AdminPage/PageProduct/Products";
+import StatisticsPage from "../containers/AdminPage/StatisticsPage";
+import LayoutAdmin from "../containers/AdminPage/LayoutAdmin";
+import Users from "../containers/AdminPage/PageUser/Users";
+import OrdersManager from "../containers/AdminPage/PageOrder/OrdersManager";
 // import { lazy } from "react";
 
 // const Layout = lazy(() => import("../components/Layout/Layout"))
@@ -49,7 +66,7 @@ const publicRoutes = [
 const privateRoutes = [
     { path: '/', component: Home, layout: Layout },
     { path: '/account', component: Profile, layout: Layout, layoutChill: AccountLayout },
-    { path: '/account/history-product', component: HistoryProduct, layout: Layout, layoutChill: AccountLayout },
+    { path: '/account/orders', component: Orders, layout: Layout, layoutChill: AccountLayout },
     { path: '/account/setting', component: Setting, layout: Layout, layoutChill: AccountLayout },
     { path: '/account/contact', component: Contact, layout: Layout, layoutChill: AccountLayout },
     { path: '/products/:productSlug', component: ProductDetail, layout: Layout },
@@ -65,7 +82,7 @@ const adminRoutes = [
     { path: '/admin/manage-categories', component: Categories, layout: LayoutAdmin },
     { path: '/admin/manage-products', component: Products, layout: LayoutAdmin },
     { path: '/admin/manage-users', component: Users, layout: LayoutAdmin },
-    { path: '/admin/manage-orders', component: Orders, layout: LayoutAdmin },
+    { path: '/admin/manage-orders', component: OrdersManager, layout: LayoutAdmin },
 ];
 
 export {

@@ -1,0 +1,14 @@
+.checkout-select {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #AAAAAA;
+    border-radius: 8px;
+}
+
+.checkout-select td {
+    border: 1px solid #AAAAAA;
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

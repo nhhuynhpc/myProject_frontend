@@ -17,7 +17,7 @@ import NotFound from './components/NotFound';
 
 import { publicRoutes, privateRoutes, adminRoutes } from './routes';
 import { useSelector } from 'react-redux';
-import ScrollToTopOnPageChange from './ScrollToTopOnPageChange';
+import ScrollToTopOnPageChange from './helper/ScrollToTopOnPageChange';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

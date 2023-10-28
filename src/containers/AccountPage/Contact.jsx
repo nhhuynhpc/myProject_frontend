@@ -4,12 +4,9 @@ import {
     Button,
     Container,
     FormControl,
-    IconButton,
     InputAdornment,
     InputLabel,
     OutlinedInput,
-    Stack,
-    TextField,
     Typography,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -102,10 +99,20 @@ const Contact = () => {
                             ></textarea>
                         </Box>
                     </Box>
-                    <Box sx={{display: 'flex', justifyContent: 'center', marginBottom: '20px'}}>
-                      <Button variant="contained" endIcon={<SendIcon />} sx={{width: '200px'}}>
-                          Send
-                      </Button>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            endIcon={<SendIcon />}
+                            sx={{ width: '200px' }}
+                        >
+                            Send
+                        </Button>
                     </Box>
                 </Box>
             </Container>

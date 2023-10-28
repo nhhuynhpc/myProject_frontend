@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { GetProductByCustomer } from "../../services/authService"
+import { GetProductByCustomer } from "../../services/productService"
 
 
 const initialState = {

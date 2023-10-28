@@ -15,7 +15,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { GetCategories } from '../../../services/authService';
+import { GetCategories } from '../../../services/categoriesService';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -27,8 +27,8 @@ const VisuallyHiddenInput = styled('input')({
     left: 0,
     whiteSpace: 'nowrap',
     width: 1,
-  });
-  const API = 'http://localhost:8080/'
+});
+const API = 'http://localhost:8080/';
 
 const AddCate = (props) => {
     const [typeCate, setTypeCate] = React.useState([]);
@@ -40,16 +40,11 @@ const AddCate = (props) => {
     });
 
     const [selectedImage, setSelectedImage] = React.useState(null);
-    const [showImage, setShowImage] = React.useState(null)
+    const [showImage, setShowImage] = React.useState(null);
 
     React.useEffect(() => {
         getDataCateDetail();
     }, []);
-
-    const getDataCateDetail = async () => {
-        let result = await GetCategories();
-        setTypeCate(result.data?.categories);
-    };
 
     React.useEffect(() => {
         setDataCate({
@@ -57,7 +52,9 @@ const AddCate = (props) => {
             name: props.dataThisCate?.name ?? '',
             categories_id: props.dataThisCate?.categories_id ?? '',
         });
-        setShowImage(props.dataThisCate?.image ? (API + props.dataThisCate?.image): null)
+        setShowImage(
+            props.dataThisCate?.image ? API + props.dataThisCate?.image : null
+        );
     }, [props.dataThisCate]);
 
     React.useEffect(() => {
@@ -67,10 +64,15 @@ const AddCate = (props) => {
                 name: '',
                 categories_id: '',
             });
-            setSelectedImage(null)
-            setShowImage(null)
+            setSelectedImage(null);
+            setShowImage(null);
         }
     }, [props.isOpen]);
+
+    const getDataCateDetail = async () => {
+        let result = await GetCategories();
+        setTypeCate(result.data?.categories);
+    };
 
     const handleChangeInput = React.useCallback(
         (event) => {
@@ -85,7 +87,7 @@ const AddCate = (props) => {
         const file = event.target.files[0];
         setSelectedImage(file);
         setShowImage(URL.createObjectURL(file));
-      };
+    };
 
     return (
         <>
@@ -170,7 +172,11 @@ const AddCate = (props) => {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={props.isClose}>Cancel</Button>
-                        <Button onClick={() => props.postData(dataCate, selectedImage)}>
+                        <Button
+                            onClick={() =>
+                                props.postData(dataCate, selectedImage)
+                            }
+                        >
                             Submit
                         </Button>
                     </DialogActions>

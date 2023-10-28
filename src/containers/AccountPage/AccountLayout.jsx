@@ -1,5 +1,5 @@
 import React from 'react';
-import './accountLayout.css'
+import './account.css';
 import {
     Box,
     Container,
@@ -35,28 +35,37 @@ const AccountLayout = ({ children }) => {
                     <nav aria-label="secondary mailbox folders">
                         <List>
                             <ListItem disablePadding>
-                                <Link to={'/account'} className='account-link'>
+                                <Link to={'/account'} className="account-link">
                                     <ListItemButton>
                                         <ListItemText primary="Hồ sơ" />
                                     </ListItemButton>
                                 </Link>
                             </ListItem>
                             <ListItem disablePadding>
-                                <Link to={'/account/history-product'} className='account-link'>
+                                <Link
+                                    to={'/account/orders'}
+                                    className="account-link"
+                                >
                                     <ListItemButton>
-                                        <ListItemText primary="Lịch sử mua hàng" />
+                                        <ListItemText primary="Đơn hàng" />
                                     </ListItemButton>
                                 </Link>
                             </ListItem>
                             <ListItem disablePadding>
-                                <Link to={'/account/setting'} className='account-link'>
+                                <Link
+                                    to={'/account/setting'}
+                                    className="account-link"
+                                >
                                     <ListItemButton>
                                         <ListItemText primary="Cài đặt" />
                                     </ListItemButton>
                                 </Link>
                             </ListItem>
                             <ListItem disablePadding>
-                                <Link to={'/account/contact'} className='account-link'>
+                                <Link
+                                    to={'/account/contact'}
+                                    className="account-link"
+                                >
                                     <ListItemButton>
                                         <ListItemText primary="Liên hệ" />
                                     </ListItemButton>

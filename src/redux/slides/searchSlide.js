@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { GetProductSearched } from "../../services/authService"
+import { GetProductSearched } from "../../services/searchService"
 
 const initialState = {
     productSearched: {
