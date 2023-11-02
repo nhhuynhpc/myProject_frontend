@@ -34,7 +34,7 @@ const Header = ({ children }) => {
     const [navbarData, setNavbarData] = React.useState();
     const [isLogin, setIsLogin] = React.useState(false);
     const [countProduct, setCountProduct] = React.useState();
-    const [textSearch, setTextSearch] = React.useState();
+    const [textSearch, setTextSearch] = React.useState('');
 
     const [dataProduct, setDataProduct] = React.useState([]);
     const [sumPriceProduct, setSumPriceProduct] = React.useState([]);
@@ -71,7 +71,7 @@ const Header = ({ children }) => {
     };
 
     const handleDataCartDefault = () => {
-        let action = originalCart({ user_id: authRedux?.user?.result.id });
+        let action = originalCart({ user_id: authRedux?.user?.result?.id, token: authRedux?.user?.token });
         dispatch(action);
     };
 
@@ -103,7 +103,7 @@ const Header = ({ children }) => {
 
     return (
         <>
-            <header className="page-header">
+            <header className="page-header"> 
                 <p className="logo">
                     <img src={Logo} alt="img Logo" />
                 </p>

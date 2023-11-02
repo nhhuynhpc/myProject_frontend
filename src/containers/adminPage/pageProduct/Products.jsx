@@ -19,11 +19,15 @@ import {
     Postimg,
     PostProduct,
 } from '../../../services/productService';
-import { Box } from '@mui/material';
+
+import { Box, Pagination } from '@mui/material';
 
 import { useSelector } from 'react-redux';
 
 import AddProduct from './AddProduct';
+import Scroll from 'react-scroll';
+var Link = Scroll.Link;
+var Element = Scroll.Element;
 
 const Products = () => {
     const API = 'http://localhost:8080/';
@@ -46,9 +50,31 @@ const Products = () => {
     const [typeEdit, setTypeEdit] = React.useState(); //0: add cate, 1: edit cate
     const [dataThisProduct, setDataThisProduct] = React.useState({});
 
+    const [page, setPage] = React.useState(1);
+    const [dataAPage, setDataAPage] = React.useState([]);
+
     React.useEffect(() => {
         getProducts();
     }, []);
+
+    React.useEffect(() => {
+        if (isSearch) {
+            setDataAPage(dataResultSearch.slice(page * 8 - 8, page * 8));
+            return;
+        }
+        setDataAPage(dataProduct.slice(page * 8 - 8, page * 8));
+    }, [page, dataProduct, dataResultSearch]);
+
+    React.useEffect(() => {
+        if (!dataSearch) {
+            setDataResultSearch([])
+            setIsSearch(false)
+        }
+    }, [dataSearch])
+
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
 
     const getProducts = async () => {
         try {
@@ -59,6 +85,7 @@ const Products = () => {
             console.log(error);
         }
     };
+
     //add product
     const handleOpenAddData = (type, aData) => {
         setTypeEdit(type);
@@ -141,7 +168,6 @@ const Products = () => {
     // handle search
     const handleSearch = async () => {
         let result = await SearchProduct({ data: dataSearch });
-        console.log(result.data);
         if (result.data.err !== 0) {
             Swal.fire({
                 icon: 'warning',
@@ -169,8 +195,8 @@ const Products = () => {
                         />
                     </td>
                     <td>{item.price}</td>
-                    <td>{item.typeProduct}</td>
-                    <td>{item.typeCustomer}</td>
+                    <td>{item?.typeProduct ?? 'err'}</td>
+                    <td>{item?.typeCustomer ?? 'err'}</td>
                     <td>
                         <Box
                             sx={{
@@ -213,13 +239,13 @@ const Products = () => {
                 dataThisProduct={typeEdit === 0 ? '' : dataThisProduct}
                 postData={typeEdit === 0 ? postProduct : handleEditProduct}
             />
-
+            <Element name="secondInsideContainer"></Element>
             <div className="adminpage-container">
                 <div className="adminpage-title">
                     <div className="title-icon">
                         <img src={fileIcon} alt="img file" />
                     </div>
-                    <span className="title-text">Quản lý loại sản phẩm</span>
+                    <span className="title-text">Quản lý sản phẩm</span>
                 </div>
                 <div className="admin-form-search">
                     <input
@@ -248,15 +274,47 @@ const Products = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isSearch
-                                ? dataResultSearch.map((item, index) => (
-                                      <ItemCate key={index} {...item} />
-                                  ))
-                                : dataProduct.map((item, index) => (
-                                      <ItemCate key={index} {...item} />
-                                  ))}
+                            {dataAPage.map((item, index) => (
+                                <ItemCate key={index} {...item} />
+                            ))}
                         </tbody>
                     </table>
+                    <Box
+                        sx={{
+                            button: {
+                                color: 'black',
+                            },
+                        }}
+                    >
+                        <Link
+                            activeClass="active"
+                            to="secondInsideContainer"
+                            spy={true}
+                            smooth={true}
+                            duration={250}
+                        >
+                            <Pagination
+                                count={
+                                    isSearch
+                                        ? dataResultSearch.length % 8 === 0
+                                            ? dataResultSearch.length / 8
+                                            : Math.floor(
+                                                  dataResultSearch.length / 8
+                                              ) + 1
+                                        : dataProduct.length % 8 === 0
+                                        ? dataProduct.length / 8
+                                        : Math.floor(dataProduct.length / 8) + 1
+                                }
+                                page={page}
+                                onChange={handleChangePage}
+                                sx={{
+                                    marginTop: '30px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            />
+                        </Link>
+                    </Box>
                 </div>
             </div>
             <Outlet />

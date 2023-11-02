@@ -71,7 +71,7 @@ const Register = () => {
                     <TextField
                         id="username"
                         name="username"
-                        label="Tên tài khoản"
+                        label="Họ tên"
                         type="text"
                         onChange={(e) => handleOnChangeInput(e)}
                         variant="standard"

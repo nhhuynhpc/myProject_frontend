@@ -62,6 +62,16 @@ a {
     overflow: hidden;
 }
 
+@media screen and (max-width: 1200px) {
+    .adminpage-container {
+        width: 72vw;
+    }
+
+    .toolbar {
+        width: 26vw;
+    }
+}
+
 .adminpage-title {
     display: flex;
     align-items: center;
@@ -266,9 +276,11 @@ a {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    text-align: center;
 }
 
 .cgr-table th, .cgr-table td {
+    text-align: center;
     border: 1px solid #ddd;
     padding: 8px;
 }
@@ -284,7 +296,6 @@ a {
 .cgr-table th {
     padding-top: 12px;
     padding-bottom: 12px;
-    text-align: left;
     background-color: #04AA6D;
     color: white;
 }

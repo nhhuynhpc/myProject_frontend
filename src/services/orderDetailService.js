@@ -22,5 +22,5 @@ export {
     PostAddOrdersDetail,
     GetDataProductInOrder,
     PostUpdateOrderDetail,
-    GetDataProductInOrderByOrderId,
+    GetDataProductInOrderByOrderId, 
 }

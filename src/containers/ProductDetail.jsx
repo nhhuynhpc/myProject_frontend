@@ -34,7 +34,7 @@ const ProductDetail = () => {
     const [dataProductsuggest, setDataProductSuggest] = React.useState([]);
     const [dataProductDetail, setDataProductDetail] = React.useState([]);
     const [valueProduct, setValueProduct] = React.useState(1);
-    const [value, setValue] = React.useState(4);
+    const [valueProductQuanlity, setValueProductQuanlity] = React.useState(4);
     const [expanded, setExpanded] = React.useState('panel1');
 
     React.useEffect(() => {
@@ -86,12 +86,15 @@ const ProductDetail = () => {
             navigate('/login');
             return;
         }
+        
         let dataToUpdateCart = {
             user_id: authRedux?.user?.result?.id ?? '',
             product_id: dataProductDetail.id,
             quantity: valueProduct,
             size: productSize,
+            token: authRedux?.user?.token ?? 'nu'
         };
+
         const action = addCart(dataToUpdateCart);
         dispatch(action);
     };
@@ -166,9 +169,9 @@ const ProductDetail = () => {
                         >
                             <Rating
                                 name="simple-controlled"
-                                value={value}
+                                value={valueProductQuanlity}
                                 onChange={(event, newValue) => {
-                                    setValue(newValue);
+                                    setValueProductQuanlity(newValue);
                                 }}
                             />
                         </Box>

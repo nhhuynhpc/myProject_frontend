@@ -7,20 +7,54 @@ import {
     Card,
     CardMedia,
     MenuItem,
+    Pagination,
     Select,
+    Stack,
     SwipeableDrawer,
     Typography,
 } from '@mui/material';
+import Input from '@mui/joy/Input';
 import {
     GetOrdersAll,
     GetOrdersById,
     PostUpdateOrder,
 } from '../../../services/orderService';
 import {
-    GetDataProductInOrder,
     GetDataProductInOrderByOrderId,
-    PostUpdateOrderDetail,
 } from '../../../services/orderDetailService';
+import { styled } from '@mui/material/styles';
+import Badge from '@mui/material/Badge';
+import Swal from 'sweetalert2';
+import Scroll from 'react-scroll';
+var Link = Scroll.Link;
+var Element = Scroll.Element;
+
+const StyledBadge = styled(Badge)(({ theme, stylecolor }) => ({
+    '& .MuiBadge-badge': {
+        backgroundColor: stylecolor ?? '#44b700',
+        color: stylecolor ?? '#44b700',
+        boxShadow: `0 0 0 5px ${theme.palette.background.paper}`,
+        '&::after': {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            animation: 'ripple 1.2s infinite ease-in-out',
+            border: '1px solid currentColor',
+            content: '""',
+        },
+    },
+    '@keyframes ripple': {
+        '0%': {
+            transform: 'scale(.8)',
+            opacity: 1,
+        },
+        '100%': {
+            transform: 'scale(2.4)',
+            opacity: 0,
+        },
+    },
+}));
 
 const api_url = 'http://localhost:8080/';
 
@@ -31,9 +65,31 @@ const OrdersManager = () => {
 
     const [dataOrder, setDataOrder] = React.useState([]);
 
+    const [page, setPage] = React.useState(1);
+    const [dataAPage, setDataAPage] = React.useState([]);
+
     React.useEffect(() => {
         handleDataOrder();
     }, []);
+
+    React.useEffect(() => {
+        if (isSearch) {
+            setDataAPage(dataResultSearch.slice(page * 8 - 8, page * 8));
+            return;
+        }
+        setDataAPage(dataOrder.slice(page * 8 - 8, page * 8));
+    }, [page, dataOrder, dataResultSearch]);
+
+    React.useEffect(() => {
+        if (!dataSearch) {
+            setDataResultSearch([])
+            setIsSearch(false)
+        }
+    }, [dataSearch])
+
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
 
     const handleDataOrder = async () => {
         let resultOrder = await GetOrdersAll();
@@ -42,10 +98,25 @@ const OrdersManager = () => {
     };
 
     // handle search
-    const handleSearch = async () => {};
+    const handleSearch = async () => {
+        let regex = new RegExp(dataSearch, "i")
+        let data = dataOrder.filter(item => regex.test(item?.code_order))
+        if (data.length !== 0) {
+            setIsSearch(true)
+            setDataResultSearch(data)
+            return
+        }
+
+        Swal.fire({
+            icon: 'warning',
+            html: `<h3>Không tìm thấy sản phẩm</h3>`,
+        });
+        setIsSearch(false)
+    };
 
     return (
         <div>
+            <Element name="secondInsideContainer"></Element>
             <div className="adminpage-container">
                 <div className="adminpage-title">
                     <div className="title-icon">
@@ -56,7 +127,7 @@ const OrdersManager = () => {
                 <div className="admin-form-search">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm sản phẩm"
+                        placeholder="Tìm kiếm đơn hàng"
                         onChange={(e) => setDataSearch(e.target.value)}
                     />
                     <button onClick={() => handleSearch()}>Search</button>
@@ -67,17 +138,18 @@ const OrdersManager = () => {
                             <tr>
                                 <th>ID</th>
                                 <th>Mã đơn</th>
-                                <th>Người mua</th>
-                                <th>Thời gian</th>
+                                <th>Thời gian đặt</th>
+                                <th>Ngày giao</th>
                                 <th>Số lượng sản phẩm</th>
                                 <th>Giá trị đơn</th>
                                 <th>Trạng thái</th>
-                                <th>Xem chi tiết</th>
+                                <th>Khách hàng</th>
+                                <th>Chức năng</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {dataOrder &&
-                                dataOrder.map((data, index) => (
+                            {dataAPage &&
+                                dataAPage.map((data, index) => (
                                     <ItemOrders
                                         key={index}
                                         dataOrder={data.id}
@@ -85,6 +157,42 @@ const OrdersManager = () => {
                                 ))}
                         </tbody>
                     </table>
+                    {dataOrder.length < 8 ? '':
+                        <Box sx={{
+                            button: {
+                                color: 'black'
+                            }
+                        }}>
+                            <Link
+                                activeClass="active"
+                                to="secondInsideContainer"
+                                spy={true}
+                                smooth={true}
+                                duration={250}
+                            >
+                                <Pagination
+                                    count={
+                                        isSearch
+                                            ? dataResultSearch.length % 8 === 0
+                                                ? dataResultSearch.length / 8
+                                                : Math.floor(
+                                                    dataResultSearch.length / 8
+                                                ) + 1
+                                            : dataOrder.length % 8 === 0
+                                            ? dataOrder.length / 8
+                                            : Math.floor(dataOrder.length / 8) + 1
+                                    }
+                                    page={page}
+                                    onChange={handleChangePage}
+                                    sx={{
+                                        marginTop: '30px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}
+                                />
+                            </Link>
+                        </Box>
+                    }
                 </div>
             </div>
         </div>
@@ -94,9 +202,10 @@ const OrdersManager = () => {
 const ItemOrders = (props) => {
     const [dataOrder, setDataOrder] = React.useState();
     const [dataProductInOrder, setDataProductInOrder] = React.useState([]);
-    const [valueStatusOrder, setValueStatusOrder] = React.useState({
+    const [dataUpdateOrder, setDataUpdateOrder] = React.useState({
         id: props.dataOrder ?? '',
         status: '',
+        deliveryDate: '',
     });
     const [openTapProductInOrder, setOpenTapProductInOrder] =
         React.useState(false);
@@ -120,18 +229,12 @@ const ItemOrders = (props) => {
     }, []);
 
     React.useEffect(() => {
-        handleUpdateStatus();
-    }, [valueStatusOrder]);
-
-    React.useEffect(() => {
-        setValueStatusOrder({
-            ...valueStatusOrder,
+        setDataUpdateOrder({
+            ...dataUpdateOrder,
             status: dataOrder?.status ?? '',
+            deliveryDate: dataOrder?.delivery_date ?? '',
         });
-        handleDataStatus();
     }, [dataOrder]);
-
-    React.useEffect(() => {handleDataStatus()}, [dataProductInOrder])
 
     const handleDataOrder = async () => {
         let resultOrder = await GetOrdersById({ id: props.dataOrder });
@@ -146,30 +249,22 @@ const ItemOrders = (props) => {
         setDataProductInOrder(resultProductInOrder.data.result);
     };
 
-    const handleDataStatus = () => {
-        if (dataProductInOrder.length !== 0) {
-            if (dataProductInOrder.length === dataProductInOrder.filter((item) => item.status === dataProductInOrder[0].status).length) {
-                setValueStatusOrder({
-                    ...valueStatusOrder,
-                    status: dataProductInOrder[0]?.status,
-                });
-                return
-            }
-            let check = dataProductInOrder[0].status;
-            for (let i = 0; i < dataProductInOrder.length; i++) {
-                if (dataProductInOrder[i].status <= check) {
-                    check = dataProductInOrder[i].status
-                }
-            }
-            setValueStatusOrder({
-                ...valueStatusOrder,
-                status: check,
-            });
-        }
-    };
-
-    const handleUpdateStatus = async () => {
-        await PostUpdateOrder(valueStatusOrder);
+    const handleUpdateDataOrder = async () => {
+        let isChange = false;
+        Swal.fire({
+            icon: 'error',
+            html: '<h3>Bạn có chắc muốn thay đổi?</h3>',
+            focusConfirm: false,
+            cancelButtonText: 'Hủy',
+            confirmButtonText: 'Xác nhận',
+            showCancelButton: true,
+            preConfirm: async () => {
+                isChange = true;
+                await PostUpdateOrder(dataUpdateOrder);
+            },
+        }).then(async () => {
+            if (isChange) handleDataOrder()
+        });
     };
 
     const handleDataDetail = () => {
@@ -189,9 +284,16 @@ const ItemOrders = (props) => {
         };
     };
 
+    const handleChangeInDeliveryDate = (event) => {
+        setDataUpdateOrder({
+            ...dataUpdateOrder,
+            deliveryDate: event.target.value,
+        });
+    };
+
     const handleChangeStatusOrder = (event) => {
-        setValueStatusOrder({
-            ...valueStatusOrder,
+        setDataUpdateOrder({
+            ...dataUpdateOrder,
             status: event.target.value,
         });
     };
@@ -212,7 +314,6 @@ const ItemOrders = (props) => {
             <tr>
                 <td>{dataOrder?.id ?? 'err'}</td>
                 <td>{dataOrder?.code_order ?? 'err'}</td>
-                <td>{dataOrder?.name ?? 'err'}</td>
                 <td>
                     {daysDifference >= 1 ? (
                         <span>
@@ -222,6 +323,7 @@ const ItemOrders = (props) => {
                         <span>{hoursDifference} giờ trước</span>
                     )}
                 </td>
+                <td>{dataOrder?.delivery_date ?? ''}</td>
                 <td>{handleDataDetail().sumQuantity}</td>
                 <td>
                     {handleDataDetail().sumPrice?.toLocaleString('it-It') ??
@@ -229,40 +331,225 @@ const ItemOrders = (props) => {
                     <b>đ</b>
                 </td>
                 <td>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={valueStatusOrder.status}
-                        onChange={handleChangeStatusOrder}
-                    >
-                        <MenuItem value={0}>Xử lý Đơn</MenuItem>
-                        <MenuItem value={1}>Giao hàng</MenuItem>
-                        <MenuItem value={2}>Hoàn thành</MenuItem>
-                        <MenuItem value={3}>Hủy</MenuItem>
-                    </Select>
+                    {dataOrder?.status === 0 ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <StyledBadge
+                                overlap="circular"
+                                sx={{ marginRight: '15px' }}
+                                stylecolor="#E0DE40"
+                                variant="dot"
+                            ></StyledBadge>
+                            <Typography>Xử lý đơn</Typography>
+                        </Box>
+                    ) : dataOrder?.status === 1 ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <StyledBadge
+                                overlap="circular"
+                                sx={{ marginRight: '15px' }}
+                                stylecolor="#2CD6DB"
+                                variant="dot"
+                            ></StyledBadge>
+                            <Typography>Giao hàng</Typography>
+                        </Box>
+                    ) : dataOrder?.status === 2 ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <StyledBadge
+                                overlap="circular"
+                                sx={{ marginRight: '15px' }}
+                                variant="dot"
+                            ></StyledBadge>
+                            <Typography>Hoàn thành</Typography>
+                        </Box>
+                    ) : (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <StyledBadge
+                                overlap="circular"
+                                sx={{ marginRight: '15px' }}
+                                stylecolor="#EA393B"
+                                variant="dot"
+                            ></StyledBadge>
+                            <Typography>Hủy</Typography>
+                        </Box>
+                    )}
                 </td>
                 <td>
-                    <Button
-                        sx={{ textTransform: 'none' }}
-                        variant="contained"
-                        onClick={() => setOpenTapProductInOrder(true)}
+                    {dataOrder?.name ?? 'null'}
+                </td>
+                <td>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-evenly',
+                        }}
                     >
-                        Xem chi tiết
-                    </Button>
+                        <Button
+                            sx={{ textTransform: 'none' }}
+                            variant="contained"
+                            onClick={() => setOpenTapProductInOrder(true)}
+                        >
+                            Xem chi tiết & chỉnh sửa
+                        </Button>
+                    </Box>
                     <SwipeableDrawer
                         anchor={'right'}
                         open={openTapProductInOrder}
                         onClose={toggleDrawer(false)}
                         onOpen={toggleDrawer(true)}
+                        sx={{zIndex: '11'}}
                     >
-                        {dataProductInOrder &&
-                            dataProductInOrder.map((data, index) => (
-                                <ItemProductInOrder
-                                    key={index}
-                                    dataProduct={data}
-                                    handleDataProductInOrder={handleDataProductInOrder}
-                                />
-                            ))}
+                        <Box
+                            sx={{
+                                width: '380px',
+                                margin: '10px auto',
+                                padding: '5px 8px',
+                                border: '1px solid #AAAAAA',
+                                borderRadius: '7px',
+                            }}
+                        >
+                            <Typography
+                                sx={{ fontSize: '18px', fontWeight: '550' }}
+                            >
+                                Thông tin
+                            </Typography>
+                            <Typography>
+                                <b>Tên: </b>
+                                {dataOrder?.name ?? 'err'}
+                            </Typography>
+                            <Typography>
+                                <b>Ngày đặt: </b>
+                                {givenDate.getDate() +
+                                    '-' +
+                                    (parseInt(givenDate.getMonth()) + 1) +
+                                    '-' +
+                                    givenDate.getFullYear()}
+                            </Typography>
+                            <Typography>
+                                <b>Số điện thoại: </b>
+                                {dataOrder?.phone ?? 'err'}
+                            </Typography>
+                            <Typography>
+                                <b>Địa chỉ giao: </b>
+                                {dataOrder?.address ?? 'err'}
+                            </Typography>
+                            <Box
+                                sx={{
+                                    marginTop: '8px',
+                                    padding: '8px 0',
+                                    borderTop: '1px solid #AAAAAA',
+                                }}
+                            >
+                                <Typography
+                                    sx={{ fontSize: '18px', fontWeight: '550' }}
+                                >
+                                    Cập nhật hóa đơn
+                                </Typography>
+                                <Stack spacing={1.5}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Typography>
+                                            <b>Ngày giao: </b>
+                                        </Typography>
+                                        <Input
+                                            type="date"
+                                            slotProps={{
+                                                input: {
+                                                    min: '2018-06-07T00:00',
+                                                    max: '2018-06-14T00:00',
+                                                },
+                                            }}
+                                            value={dataUpdateOrder.deliveryDate}
+                                            onChange={(e) =>
+                                                handleChangeInDeliveryDate(e)
+                                            }
+                                            sx={{
+                                                marginLeft: '7px',
+                                                height: '30px',
+                                            }}
+                                        />
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Typography sx={{ fontWeight: '550' }}>
+                                            Trạng thái:{' '}
+                                        </Typography>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            sx={{
+                                                marginLeft: '7px',
+                                                height: '30px',
+                                                width: '135px',
+                                            }}
+                                            value={dataUpdateOrder.status}
+                                            onChange={handleChangeStatusOrder}
+                                        >
+                                            <MenuItem value={0}>
+                                                Xử lý Đơn
+                                            </MenuItem>
+                                            <MenuItem value={1}>
+                                                Giao hàng
+                                            </MenuItem>
+                                            <MenuItem value={2}>
+                                                Hoàn thành
+                                            </MenuItem>
+                                            <MenuItem value={3}>Hủy</MenuItem>
+                                        </Select>
+                                    </Box>
+                                </Stack>
+                                <Box sx={{display: 'flex', justifyContent: 'center', marginTop: '15px'}}>
+                                    <Button
+                                        sx={{ textTransform: 'none' }}
+                                        variant="contained"
+                                        onClick={() =>
+                                            handleUpdateDataOrder()
+                                        }
+                                    >
+                                        Xác nhận
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box sx={{ overflowY: 'scroll', height: '60vh' }}>
+                            {dataProductInOrder &&
+                                dataProductInOrder.map((data, index) => (
+                                    <ItemProductInOrder
+                                        key={index}
+                                        dataProduct={data}
+                                    />
+                                ))}
+                        </Box>
                     </SwipeableDrawer>
                 </td>
             </tr>
@@ -271,32 +558,6 @@ const ItemOrders = (props) => {
 };
 
 const ItemProductInOrder = (props) => {
-    const [valueStatusOrderDetail, setValueStatusOrderDetail] = React.useState({
-        id: props.dataProduct.id,
-        status: props.dataProduct.status,
-    });
-    const [dataUpdate, setDataUpdate] = React.useState()
-
-    React.useEffect(() => {
-        handleUpdateStatus()
-    }, [valueStatusOrderDetail]);
-
-    React.useEffect(() => {
-        props.handleDataProductInOrder()
-    }, [dataUpdate])
-
-    const handleUpdateStatus = async () => {
-        let result = await PostUpdateOrderDetail(valueStatusOrderDetail);
-
-        setDataUpdate(result.data?.result ?? '')
-    };
-
-    const handleChangeStatusOrderDetail = (event) => {
-        setValueStatusOrderDetail({
-            ...valueStatusOrderDetail,
-            status: event.target.value,
-        });
-    };
     return (
         <React.Fragment>
             <Card
@@ -333,52 +594,31 @@ const ItemProductInOrder = (props) => {
                             'err'}
                         <b>đ</b>
                     </Typography>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Typography>
-                            <b>Kích thước: </b> {props.dataProduct.size}
-                        </Typography>
-                        <Typography>x{props.dataProduct.quantity}</Typography>
-                    </Box>
                     <Typography>
-                        <b>Tổng giá: </b>
-                        {(
-                            parseInt(props.dataProduct.quantity ?? 0) *
-                            parseInt(props.dataProduct.price ?? 0)
-                        ).toLocaleString('it-It')}
-                        <b>đ</b>
+                        <b>Số lượng: </b>
+                        {props.dataProduct.quantity}
+                    </Typography>
+                    <Typography>
+                        <b>Kích thước: </b> {props.dataProduct.size}
                     </Typography>
                     <Box
                         sx={{
                             borderTop: '1px solid #AAAAAA',
+                            marginTop: '20px',
                             paddingTop: '10px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'end',
-                            marginTop: '15px',
                         }}
                     >
-                        <Typography
-                            sx={{ fontSize: '18px', fontWeight: '550' }}
-                        >
-                            Trạng thái:{' '}
+                        <Typography>
+                            <b>Tổng giá: </b>
+                            {(
+                                parseInt(props.dataProduct.quantity ?? 0) *
+                                parseInt(props.dataProduct.price ?? 0)
+                            ).toLocaleString('it-It')}
+                            <b>đ</b>
                         </Typography>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={valueStatusOrderDetail.status}
-                            onChange={handleChangeStatusOrderDetail}
-                            sx={{ height: '30px', marginLeft: '10px' }}
-                        >
-                            <MenuItem value={0}>Xử lý Đơn</MenuItem>
-                            <MenuItem value={1}>Giao hàng</MenuItem>
-                            <MenuItem value={2}>Hoàn thành</MenuItem>
-                            <MenuItem value={3}>Hủy</MenuItem>
-                        </Select>
                     </Box>
                 </Box>
             </Card>

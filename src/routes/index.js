@@ -36,6 +36,7 @@ import StatisticsPage from "../containers/AdminPage/StatisticsPage";
 import LayoutAdmin from "../containers/AdminPage/LayoutAdmin";
 import Users from "../containers/AdminPage/PageUser/Users";
 import OrdersManager from "../containers/AdminPage/PageOrder/OrdersManager";
+import HistoryOrders from "../containers/AccountPage/HistoryOrders";
 // import { lazy } from "react";
 
 // const Layout = lazy(() => import("../components/Layout/Layout"))
@@ -69,6 +70,7 @@ const privateRoutes = [
     { path: '/account/orders', component: Orders, layout: Layout, layoutChill: AccountLayout },
     { path: '/account/setting', component: Setting, layout: Layout, layoutChill: AccountLayout },
     { path: '/account/contact', component: Contact, layout: Layout, layoutChill: AccountLayout },
+    { path: '/account/history-order', component: HistoryOrders, layout: Layout, layoutChill: AccountLayout },
     { path: '/products/:productSlug', component: ProductDetail, layout: Layout },
     { path: '/:groupProducts', component: CategoriesLayout, layout: Layout },
     { path: '/:groupProducts/:products', component: ProductsPage, layout: Layout},

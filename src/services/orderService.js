@@ -22,10 +22,16 @@ const PostUpdateOrder = (data) => {
     return axios.post(API_URL + '/order/update', data)
 }
 
+const PostCancelOrder = (data, token) => {
+    return axios.post(API_URL + '/order/cancel-order', data, {headers: {Authorization: 'Bearer ' + token}})
+    .catch(err => console.log(err))
+}
+
 export {
     PostAddOrders,
     GetOrders,
     GetOrdersAll,
     PostUpdateOrder,
-    GetOrdersById
+    GetOrdersById,
+    PostCancelOrder
 }

@@ -19,7 +19,7 @@ import Scroll from 'react-scroll';
 
 const api_url = 'http://localhost:8080/';
 
-const Orders = () => {
+const HistoryOrders = () => {
     const authRedux = useSelector((state) => state.auth);
 
     const [productInOrder, setProductInOrder] = React.useState([]);
@@ -68,7 +68,7 @@ const Orders = () => {
             user_id: authRedux.user.result.id,
         });
 
-        let handleDataOrder = resutlDataOrders.data.result.filter(item => item.status < 2)
+        let handleDataOrder = resutlDataOrders.data.result.filter(item => item.status > 1)
 
         setDataOrder(handleDataOrder ?? []);
     };
@@ -84,12 +84,6 @@ const Orders = () => {
         });
 
         setProductInOrder(resultDataHistoryProduct.data.result ?? []);
-    };
-
-    const handleCancelOrder = async (data) => {
-        await PostCancelOrder({id: data, user_id: authRedux.user?.result.id}, authRedux.user?.token)
-        handleDataOrders()
-        handleClickQuery()
     };
 
     // handle open product detail
@@ -156,7 +150,9 @@ const Orders = () => {
                     <Box>
                         {query === 'success' ? (
                             <div className="order-products__detail">
-                                <Box sx={{ overflowY: 'scroll', height: '50vh' }}>
+                                <Box
+                                    sx={{ overflowY: 'scroll', height: '50vh' }}
+                                >
                                     {productEachOrder.map((data, index) => (
                                         <ItemProductInOrder
                                             key={index}
@@ -164,15 +160,23 @@ const Orders = () => {
                                         />
                                     ))}
                                 </Box>
-                                <Box sx={{marginTop: '20px',display: 'flex', justifyContent: 'center'}}>
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        sx={{width: '200px'}}
-                                        onClick={() => handleCancelOrder(orderId)}
+                                <Box
+                                    sx={{
+                                        marginTop: '20px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontSize: '20px',
+                                            fontWeight: '550',
+                                            color: '#D83B3E',
+                                        }}
                                     >
-                                        Hủy đơn hàng
-                                    </Button>
+                                        Cảm ơn bạn đã sử dụng dịch vụ của cửa
+                                        hàng
+                                    </Typography>
                                 </Box>
                             </div>
                         ) : (
@@ -395,7 +399,6 @@ const ItemOrder = (props) => {
                             justifyContent: 'space-between',
                         }}
                     >
-                    </Box>
                         <Typography>
                             <b>Tên: </b>
                             {props.dataOrders.name}
@@ -404,12 +407,13 @@ const ItemOrder = (props) => {
                             <b>Số điện thoại: </b>
                             {props.dataOrders.phone}
                         </Typography>
+                    </Box>
                     <Typography>
                         <b>Địa chỉ: </b>
                         {props.dataOrders.address}
                     </Typography>
                     <Typography>
-                        <b>Thời gian đặt hàng: </b>
+                        <b>Thời gian: </b>
                         {date.getHours() + ':' + date.getMinutes()}
                         <span>, Ngày: </span>
                         {date.getDate() +
@@ -458,4 +462,4 @@ const ItemOrder = (props) => {
     );
 };
 
-export default Orders;
+export default HistoryOrders;

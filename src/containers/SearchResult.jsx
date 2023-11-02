@@ -42,7 +42,13 @@ const SearchResult = () => {
                 >
                     <Box sx={{ margin: '25px 0' }}>
                         <Typography>
-                            <b>Kết quả tìm kiếm: </b>{' '}
+                            <b>
+                                Kết quả tìm kiếm cho từ khóa "
+                                <i style={{ color: '#E34871' }}>
+                                    {resultSearch?.textSearch ?? 'err'}
+                                </i>
+                                ":{' '}
+                            </b>{' '}
                             {
                                 <span>
                                     <span>{quantitySearch}</span> sản phẩm
@@ -96,18 +102,24 @@ const SearchResult = () => {
                                 </Grid>
                             ))}
                         </Grid>
-                        <a href="#blockProductHeading">
-                            <Pagination
-                                count={Math.floor(resultProduct.length / 12)}
-                                page={page}
-                                onChange={handleChangePage}
-                                sx={{
-                                    marginTop: '30px',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                }}
-                            />
-                        </a>
+                        {parseInt(quantitySearch) === 0 ? (
+                            ''
+                        ) : (
+                            <a href="#blockProductHeading">
+                                <Pagination
+                                    count={Math.floor(
+                                        resultProduct.length / 12
+                                    )}
+                                    page={page}
+                                    onChange={handleChangePage}
+                                    sx={{
+                                        marginTop: '30px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}
+                                />
+                            </a>
+                        )}
                     </Box>
                 </Container>
             </div>

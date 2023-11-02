@@ -74,7 +74,7 @@ const Home = () => {
 
     const [dataProduct, setDataProduct] = React.useState([]);
 
-    const settings = {
+    const settings = { 
         dots: true,
         infinite: true,
         speed: 500,
@@ -109,7 +109,6 @@ const Home = () => {
     React.useEffect(() => {
         setDataAPage(dataProduct.slice(page * 12 - 12, page * 12));
     }, [page, dataProduct]);
-
     const getProducts = async () => {
         try {
             let result = await GetProduct();
@@ -146,39 +145,6 @@ const Home = () => {
                     <Item key={i} item={item} />
                 ))}
             </Carousel>
-            <Container sx={{ marginTop: '25px' }}>
-                {/* <Box sx={{ bgcolor: "background.paper" }}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              indicatorColor="secondary"
-              textColor="inherit"
-              variant="fullWidth"
-              aria-label="full width tabs example"
-            >
-              <Tab label="NỮ" {...a11yProps(0)} />
-              <Tab label="NAM" {...a11yProps(1)} />
-              <Tab label="TRẺ EM" {...a11yProps(2)} />
-            </Tabs>
-          </Box>
-          <SwipeableViews
-            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-            index={value}
-            onChangeIndex={handleChangeIndex}
-          >
-            <TabPanel value={value} index={0} dir={theme.direction}>
-              Item One
-            </TabPanel>
-            <TabPanel value={value} index={1} dir={theme.direction}>
-              Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2} dir={theme.direction}>
-              Item Three
-            </TabPanel>
-          </SwipeableViews>
-        </Box> */}
-            </Container>
             <div className="site-main">
                 <div className="block-product">
                     <Container sx={{ marginTop: '25px' }}>
@@ -246,7 +212,8 @@ const Home = () => {
                                         item
                                         xs={2}
                                         sm={4}
-                                        md={dataAPage.length > 3 ? 4 : 8}
+                                        md={dataAPage.length === 1 ? 16
+                                            :dataAPage.length > 3 ? 4 : 8}
                                         key={i}
                                     >
                                         <ItemBlockProduct item={item} />

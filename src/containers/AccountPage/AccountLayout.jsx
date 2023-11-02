@@ -53,6 +53,16 @@ const AccountLayout = ({ children }) => {
                             </ListItem>
                             <ListItem disablePadding>
                                 <Link
+                                    to={'/account/history-order'}
+                                    className="account-link"
+                                >
+                                    <ListItemButton>
+                                        <ListItemText primary="Lịch sử đơn hàng" />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <Link
                                     to={'/account/setting'}
                                     className="account-link"
                                 >
@@ -74,7 +84,7 @@ const AccountLayout = ({ children }) => {
                         </List>
                     </nav>
                 </Box>
-                <Box sx={{ width: '70%', padding: '20px 15px' }}>
+                <Box sx={{ width: '76%', padding: '20px 15px' }}>
                     {children}
                 </Box>
             </Container>

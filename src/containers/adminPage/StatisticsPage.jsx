@@ -6,27 +6,43 @@ import { GetOrdersAll } from '../../services/orderService';
 import { GetDataProductInOrder } from '../../services/orderDetailService';
 
 const StatisticsPage = () => {
+    // set date
+    var curr = new Date();
+    curr.setDate(curr.getDate());
+    var date = curr.toISOString().substring(0, 10);
+
     const [dataOrder, setDataOrder] = React.useState([]);
-    const [productInOrder, setProductInOrder] = React.useState([])
+    const [productInOrder, setProductInOrder] = React.useState([]);
+    const [listProductInOrderIsSuccess, setListProductInOrderIsSuccess] =
+        React.useState([]);
     //set number product
     const [quantityProduct, setQuantityProduct] = React.useState();
 
-    // set date
-    var curr = new Date();
-    curr.setDate(curr.getDate() + 3);
-    var date = curr.toISOString().substring(0, 10);
-
-    const [month, setMonth] = React.useState(getCurrentMonth());
+    const [dataDateForStatistics, setDataDateForStatistics] = React.useState({
+        dataMonth: '',
+        dataDay: ''
+    })
+    const [sumPriceProductInOrderByDay, setSumPriceProductInOrderByDay] = React.useState('0')
+    const [sumPriceProductInOrderByMonth, setSumPriceProductInOrderByMonth] = React.useState('0')
 
     React.useEffect(() => {
-        setMonth(getCurrentMonth());
+        setDataDateForStatistics({...dataDateForStatistics, dataMonth: getCurrentMonth(), dataDay: date})
         getProduct();
         handleDataOrder();
     }, []);
 
     React.useEffect(() => {
-        handleDataProductInOrder()
-    }, [dataOrder])
+        handleDataProductInOrder();
+    }, [dataOrder]);
+
+    React.useEffect(() => {
+        handleListProductInOrderIsSuccess();
+    }, [productInOrder]);
+
+    React.useEffect(() => {
+        caculateSumPriceByMonth(dataDateForStatistics.dataMonth)
+        caculateSumPriceByDay(dataDateForStatistics.dataDay)
+    }, [listProductInOrderIsSuccess])
 
     const handleDataOrder = async () => {
         let result = await GetOrdersAll();
@@ -42,28 +58,99 @@ const StatisticsPage = () => {
 
     const handleDataProductInOrder = async () => {
         if (dataOrder.length !== 0) {
-            let listOrderId = []
+            let listOrderId = [];
             for (let item of dataOrder) {
-                listOrderId.push(item.id)
+                listOrderId.push(item.id);
             }
-    
-            let result = await GetDataProductInOrder({listOrderId: listOrderId})
-            setProductInOrder(result.data.result)
+
+            let result = await GetDataProductInOrder({
+                listOrderId: listOrderId,
+            });
+            setProductInOrder(result.data.result);
         }
-    }
+    };
+
+    const handleListProductInOrderIsSuccess = () => {
+        let listProductInOrderIsSuccess = [];
+        for (let item of dataOrder) {
+            if (item?.status === 2) {
+                listProductInOrderIsSuccess =
+                    listProductInOrderIsSuccess.concat(
+                        productInOrder.filter(
+                            (data) => data?.order_id === item.id
+                        )
+                    );
+            }
+        }
+        setListProductInOrderIsSuccess(listProductInOrderIsSuccess);
+    };
 
     const caculateSumprice = () => {
         if (productInOrder.length !== 0) {
-            let sumPrice = 0
-            for (let item of productInOrder) {
-                if (item?.status === 2) {
-                    sumPrice += parseInt(item.price ?? 0) * parseInt(item.quantity ?? 0)
-                }
+            let sumPrice = 0;
+
+            for (let item of listProductInOrderIsSuccess) {
+                sumPrice +=
+                    parseInt(item.price ?? 0) * parseInt(item.quantity ?? 0);
             }
-            return sumPrice
+            return sumPrice;
         }
-        return 0
-    }
+        return 0;
+    };
+
+    const handleChangeInDay = (event) => {
+        setDataDateForStatistics({...dataDateForStatistics, dataDay: event.target.value});
+    };
+// chưa sửa
+    const caculateSumPriceByDay = (day) => {
+        if (day) {
+            let sumPrice = 0;
+            let listProductInOrderByDay = listProductInOrderIsSuccess.filter(
+                (data) => {
+                    let date = new Date(data?.delivery_date);
+                    const yearOrder = date.getFullYear();
+                    const monthOrder = date.getMonth() + 1;
+                    const dayOrder = date.getDate();
+                    return (
+                        yearOrder +
+                            '-' +
+                            monthOrder +
+                            '-' +
+                            (dayOrder > 9
+                                ? dayOrder
+                                : '0' + dayOrder) ===
+                        day
+                    );
+                }
+            );
+            for (let item of listProductInOrderByDay) {
+                sumPrice += parseInt(item.quantity) * parseInt(item.price)
+            }
+            setSumPriceProductInOrderByDay(sumPrice)
+        }
+    };
+
+    const handleChangeInMonth = (event) => {
+        setDataDateForStatistics({...dataDateForStatistics, dataMonth: event.target.value});
+    };
+
+    const caculateSumPriceByMonth = (month) => {
+        if (month) {
+            let date = new Date(month);
+            let dataMonth = date.getMonth() + 1;
+            let sumPrice = 0;
+            let listProductInOrderByMonth = listProductInOrderIsSuccess.filter(
+                (data) => {
+                    let date = new Date(data?.delivery_date);
+                    return date.getMonth() + 1 === dataMonth;
+                }
+            );
+            for (let item of listProductInOrderByMonth) {
+                sumPrice += parseInt(item.quantity) * parseInt(item.price);
+            }
+            setSumPriceProductInOrderByMonth(sumPrice)
+        }
+    };
 
     function getCurrentMonth() {
         const today = new Date();
@@ -84,7 +171,9 @@ const StatisticsPage = () => {
                     <div className="row">
                         <div className="statistic-card card-1">
                             <p>Tổng doanh thu</p>
-                            <span>{caculateSumprice()?.toLocaleString('it-It')}</span>
+                            <span>
+                                {caculateSumprice()?.toLocaleString('it-It')}
+                            </span>
                         </div>
                         <div className="statistic-card card-2">
                             <p>Tổng số hóa đơn</p>
@@ -98,11 +187,15 @@ const StatisticsPage = () => {
                     <div className="row">
                         <div className="statistic-card">
                             <p>Tổng doanh thu theo ngày</p>
-                            <span>0</span>
+                            <span>
+                                {sumPriceProductInOrderByDay?.toLocaleString('it-It')}
+                            </span>
                         </div>
                         <div className="statistic-card">
                             <p>Tổng doanh thu theo tháng</p>
-                            <span>0</span>
+                            <span>
+                                {sumPriceProductInOrderByMonth?.toLocaleString('it-It')}
+                            </span>
                         </div>
                     </div>
                     <div className="statistic-setdate">
@@ -111,18 +204,22 @@ const StatisticsPage = () => {
                             <input
                                 type="date"
                                 id="date-day"
-                                defaultValue={date}
+                                value={dataDateForStatistics.dataDay}
+                                onChange={handleChangeInDay}
                             />
-                            <button>Thống kê</button>
+                            <button onClick={() => caculateSumPriceByDay(dataDateForStatistics.dataDay)}>Thống kê</button>
                         </div>
                         <div className="setdate">
                             <label htmlFor="date-month">Tháng: </label>
                             <input
                                 type="month"
                                 id="date-month"
-                                defaultValue={month}
+                                value={dataDateForStatistics.dataMonth}
+                                onChange={handleChangeInMonth}
                             />
-                            <button>Thống kê</button>
+                            <button onClick={() => caculateSumPriceByMonth(
+                                    dataDateForStatistics.dataMonth
+                                )}>Thống kê</button>
                         </div>
                     </div>
                 </div>

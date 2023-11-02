@@ -14,7 +14,7 @@ export const register = createAsyncThunk(
     "auth/register",
     async (data) => {
         return await userRegister(data)
-    }
+    } 
 )
 
 export const login = createAsyncThunk(

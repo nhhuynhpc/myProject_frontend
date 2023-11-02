@@ -7,6 +7,7 @@ const initialState = {
 
         }
     },
+    textSearch: '',
     statusSearch: false,
 }
 
@@ -24,6 +25,7 @@ const searchSlice = createSlice({
         builder
         .addCase(searchProduct.fulfilled, (state, action) => {
             state.productSearched = action.payload?.data;
+            state.textSearch = action.payload?.data?.textSearch;
             if (state.productSearched.length > 0) {
                 state.statusSearch = true
             }

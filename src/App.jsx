@@ -29,7 +29,7 @@ const App = () => {
         let state = authRedux;
         if (state?.isLoggedIn) {
             setIsLoggedIn(true);
-            if (state.user.role === 'admin') {
+            if (state.user?.role === 'admin') {
                 setIsAdmin(true);
                 return
             }

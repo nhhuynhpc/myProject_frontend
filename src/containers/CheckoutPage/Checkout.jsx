@@ -24,13 +24,16 @@ import {
     Typography,
 } from '@mui/material';
 import Swal from 'sweetalert2';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useDispatch, useSelector } from 'react-redux';
 import subVn from 'sub-vn';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
+import { uid } from 'uid';
 import { PostAddOrders } from '../../services/orderService';
 import { PostAddOrdersDetail } from '../../services/orderDetailService';
 import { deleteProdcutCart } from '../../redux/slides/cartSlide';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getUserById } from '../../services/authService';
 const api_url = 'http://localhost:8080/';
 
 const Checkout = () => {
@@ -81,9 +84,24 @@ const Checkout = () => {
     }, [cartRedux]);
 
     React.useEffect(() => {
-        setOrderData({...ordersData, code_order: uuidv4()})
         setProvinces({ ...provinces, province: subVn.getProvinces() });
+        handleDataInUser();
     }, []);
+
+    const handleDataInUser = async () => {
+        let result = await getUserById(
+            { id: authRedux?.user?.result?.id },
+            authRedux?.user?.token
+        );
+
+        setOrderData({
+            ...ordersData,
+            code_order: 'FF-' + uid(),
+            name: result.data?.dataUser?.name ?? '',
+            phone: result.data?.dataUser?.phone ?? '',
+            address: result.data?.dataUser?.address ?? '',
+        });
+    };
 
     const handleOnchangeInfo = (event) => {
         let { name, value } = event.target;
@@ -131,6 +149,7 @@ const Checkout = () => {
                 dispatch(
                     deleteProdcutCart({
                         cartsDetailsId: dataItem.cartsDetailsId,
+                        token: authRedux?.user?.token ?? '',
                     })
                 );
             }
@@ -173,8 +192,35 @@ const Checkout = () => {
                     borderRadius: '8px',
                     display: 'flex',
                     justifyContent: 'space-between',
+                    position: 'relative',
                 }}
             >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '-40px',
+                        left: '0',
+                        padding: '5px 10px',
+                        backgroundColor: 'white',
+                        borderRadius: '10px',
+                    }}
+                >
+                    <Link to={'/cart'}>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        ':hover': {
+                            color: '#36BFEA',
+                            fontStyle: 'italic'
+                        }
+                    }}>
+
+                        <ArrowBackIosIcon />
+                            <Typography sx={{fontWeight: '550'}}>Quay lại</Typography>
+                    </Box>
+                    </Link>
+                </Box>
                 <Box sx={{ width: '35%' }}>
                     <Typography sx={{ fontWeight: '700', fontSize: '19px' }}>
                         Đơn hàng <span>({countProduct} sản phẩm)</span>

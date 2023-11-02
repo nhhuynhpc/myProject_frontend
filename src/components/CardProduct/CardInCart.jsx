@@ -27,6 +27,7 @@ const CardInCart = (props) => {
             product_id: productInCart?.product_id ?? '',
             quantity: countProduct ?? '',
             size: sizeProduct ?? '',
+            token: authRedux?.user?.token ?? ''
         };
         let action = updateCart(dataCart);
         dispatch(action);
@@ -52,6 +53,7 @@ const CardInCart = (props) => {
         let action = deleteProdcutCart({
             user_id: productInCart?.user_id ?? '0',
             cartsDetailsId: productInCart?.cartsDetailsId ?? '',
+            token: authRedux?.user?.token ?? ''
         });
         dispatch(action);
     };

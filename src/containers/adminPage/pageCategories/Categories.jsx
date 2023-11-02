@@ -15,7 +15,10 @@ import Swal from 'sweetalert2';
 
 import Button from '../../../components/Button/Button';
 import AddCate from './AddCate';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Pagination } from '@mui/material';
+import Scroll from 'react-scroll';
+var Link = Scroll.Link;
+var Element = Scroll.Element;
 const API = 'http://localhost:8080/';
 
 const Categories = () => {
@@ -26,11 +29,52 @@ const Categories = () => {
         open: false,
         msg: '',
     });
+    const [dataSearch, setDataSearch] = React.useState();
+    const [dataResultSearch, setDataResultSearch] = React.useState([]);
+    const [isSearch, setIsSearch] = React.useState(false);
     const [dataThisCate, setDataThisCate] = React.useState({});
+    const [page, setPage] = React.useState(1);
+    const [dataAPage, setDataAPage] = React.useState([]);
 
     React.useEffect(() => {
         getCategories();
     }, []);
+
+    React.useEffect(() => {
+        if (isSearch) {
+            setDataAPage(dataResultSearch.slice(page * 8 - 8, page * 8));
+            return;
+        }
+        setDataAPage(dataCate.slice(page * 8 - 8, page * 8));
+    }, [page, dataCate, dataResultSearch]);
+
+    React.useEffect(() => {
+        if (!dataSearch) {
+            setDataResultSearch([]);
+            setIsSearch(false);
+        }
+    }, [dataSearch]);
+
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
+
+    // handle search
+    const handleSearch = async () => {
+        let regex = new RegExp(dataSearch, "i");
+        let data = dataCate.filter((item) => regex.test(item?.name));
+        if (data.length !== 0) {
+            setIsSearch(true);
+            setDataResultSearch(data);
+            return;
+        }
+
+        Swal.fire({
+            icon: 'warning',
+            html: `<h3>Không tìm thấy sản phẩm</h3>`,
+        });
+        setIsSearch(false);
+    };
 
     const getCategories = async () => {
         try {
@@ -43,7 +87,7 @@ const Categories = () => {
 
     // add data
     const handleChangeData = (type, data) => {
-        setLogMsg({...logMsg, open: false})
+        setLogMsg({ ...logMsg, open: false });
         setDataThisCate(data);
         setTypeEdit(type);
         setOpenHandleData(true);
@@ -105,7 +149,7 @@ const Categories = () => {
     // delete data
 
     const handleDeleteCate = async (id) => {
-        let isDelete = false
+        let isDelete = false;
         Swal.fire({
             icon: 'error',
             html: '<h3>Bạn có chắc muốn xóa?</h3>',
@@ -187,7 +231,8 @@ const Categories = () => {
                     typeEdit === 0 ? handleSubcribeAddData : handleEditCate
                 }
             />
-            <div className="adminpage-container">
+            <Element name="secondInsideContainer"></Element>
+            <div className="adminpage-container" id="cgrTable">
                 <div className="adminpage-title">
                     <div className="title-icon">
                         <img src={fileIcon} alt="img file" />
@@ -195,8 +240,12 @@ const Categories = () => {
                     <span className="title-text">Quản lý loại sản phẩm</span>
                 </div>
                 <div className="admin-form-search">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm" />
-                    <button>Search</button>
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm loại sản phẩm"
+                        onChange={(e) => setDataSearch(e.target.value)}
+                    />
+                    <button onClick={() => handleSearch()}>Search</button>
                 </div>
                 <div className="categories-content">
                     <Button
@@ -215,12 +264,48 @@ const Categories = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {dataCate &&
-                                dataCate.map((item, index) => (
+                            {dataAPage &&
+                                dataAPage.map((item, index) => (
                                     <ItemCate key={index} {...item} />
                                 ))}
                         </tbody>
                     </table>
+                    <Box
+                        sx={{
+                            button: {
+                                color: 'black',
+                            },
+                        }}
+                    >
+                        <Link
+                            activeClass="active"
+                            to="secondInsideContainer"
+                            spy={true}
+                            smooth={true}
+                            duration={250}
+                        >
+                            <Pagination
+                                count={
+                                    isSearch
+                                        ? dataResultSearch.length % 8 === 0
+                                            ? dataResultSearch.length / 8
+                                            : Math.floor(
+                                                  dataResultSearch.length / 8
+                                              ) + 1
+                                        : dataCate.length % 8 === 0
+                                        ? dataCate.length / 8
+                                        : Math.floor(dataCate.length / 8) + 1
+                                }
+                                page={page}
+                                onChange={handleChangePage}
+                                sx={{
+                                    marginTop: '30px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            />
+                        </Link>
+                    </Box>
                 </div>
             </div>
         </>

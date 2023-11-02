@@ -40,7 +40,7 @@ const ProductsPage = () => {
     const [page, setPage] = React.useState(1);
     const [dataAPage, setDataAPage] = React.useState([]);
 
-    const [value, setValue] = React.useState([0, 100]);
+    const [valuePriceRange, setValuePriceRange] = React.useState([0, 100]);
     const minDistance = 10;
 
     React.useEffect(() => {
@@ -55,10 +55,10 @@ const ProductsPage = () => {
 
     React.useEffect(() => {
         let action = setDataFilterPrice({
-            data: [value[0] * 20000, value[1] * 20000],
+            data: [valuePriceRange[0] * 20000, valuePriceRange[1] * 20000],
         });
         dispatch(action);
-    }, [value]);
+    }, [valuePriceRange]);
 
     // set data for block new product
     React.useEffect(() => {
@@ -97,13 +97,13 @@ const ProductsPage = () => {
         if (newValue[1] - newValue[0] < minDistance) {
             if (activeThumb === 0) {
                 const clamped = Math.min(newValue[0], 100 - minDistance);
-                setValue([clamped, clamped + minDistance]);
+                setValuePriceRange([clamped, clamped + minDistance]);
             } else {
                 const clamped = Math.max(newValue[1], minDistance);
-                setValue([clamped - minDistance, clamped]);
+                setValuePriceRange([clamped - minDistance, clamped]);
             }
         } else {
-            setValue(newValue);
+            setValuePriceRange(newValue);
         }
     };
 
@@ -195,11 +195,11 @@ const ProductsPage = () => {
                                             },
                                         }}
                                     >
-                                        <p>{value[0] * 20000} đ</p>
-                                        <p>{value[1] * 20000} đ</p>
+                                        <p>{(valuePriceRange[0] * 20000).toLocaleString('it-It')} đ</p>
+                                        <p>{(valuePriceRange[1] * 20000).toLocaleString('it-It')} đ</p>
                                     </Box>
                                     <Slider
-                                        value={value}
+                                        value={valuePriceRange}
                                         onChange={handleChange}
                                         aria-labelledby="non-linear-slider"
                                     />
@@ -241,7 +241,8 @@ const ProductsPage = () => {
                                                 xs={2}
                                                 sm={4}
                                                 md={
-                                                    dataAPage.length > 3 ? 4 : 8
+                                                    dataAPage.length === 1 ? 16
+                                                    :dataAPage.length > 3 ? 4 : 8
                                                 }
                                                 key={i}
                                             >
